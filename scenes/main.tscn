@@ -1,0 +1,96 @@
+[gd_scene load_steps=10 format=3 uid="uid://c4phxvqjk60vj"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_rj4t4"]
+[ext_resource type="Script" path="res://scripts/canvas.gd" id="2_y2bwc"]
+[ext_resource type="Script" path="res://scripts/crosshair.gd" id="3_0e5ta"]
+[ext_resource type="Script" path="res://scripts/info_follow.gd" id="3_dd5j6"]
+[ext_resource type="Material" uid="uid://0asm43bpndbi" path="res://shaders/invert.tres" id="3_vumrx"]
+[ext_resource type="Script" path="res://scripts/palette.gd" id="5_hi4l4"]
+[ext_resource type="FontFile" uid="uid://x8kxss0dmyu8" path="res://fonts/SourceCodePro/SourceCodePro-Regular.otf" id="6_auwyu"]
+[ext_resource type="PackedScene" uid="uid://dbporaxylev2g" path="res://scenes/palette_colour.tscn" id="6_cq0ec"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_60a27"]
+font = ExtResource("6_auwyu")
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_rj4t4")
+
+[node name="Canvas" type="TextureRect" parent="."]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(1280, 720)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -640.0
+offset_top = -360.0
+offset_right = 640.0
+offset_bottom = 360.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_y2bwc")
+
+[node name="Crosshair" type="Control" parent="."]
+unique_name_in_owner = true
+material = ExtResource("3_vumrx")
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_0e5ta")
+
+[node name="Info" type="Control" parent="."]
+unique_name_in_owner = true
+anchors_preset = 0
+script = ExtResource("3_dd5j6")
+
+[node name="VBox" type="VBoxContainer" parent="Info"]
+material = ExtResource("3_vumrx")
+layout_mode = 1
+offset_top = -10.0
+offset_right = 115.0
+offset_bottom = 177.0
+theme_override_constants/separation = 0
+
+[node name="RadiusLabel" type="Label" parent="Info/VBox"]
+visible = false
+use_parent_material = true
+layout_mode = 2
+text = "Radius"
+label_settings = SubResource("LabelSettings_60a27")
+
+[node name="ConnectLabel" type="Label" parent="Info/VBox"]
+visible = false
+use_parent_material = true
+layout_mode = 2
+text = "Connect"
+label_settings = SubResource("LabelSettings_60a27")
+
+[node name="ColourPalette" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -44.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("5_hi4l4")
+
+[node name="ColorRect" parent="ColourPalette" instance=ExtResource("6_cq0ec")]
+layout_mode = 2

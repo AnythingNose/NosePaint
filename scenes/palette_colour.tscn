@@ -1,0 +1,71 @@
+[gd_scene load_steps=4 format=3 uid="uid://dbporaxylev2g"]
+
+[ext_resource type="Script" path="res://scripts/palette_colour.gd" id="1_7l760"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_eubtb"]
+color = Color(1, 1, 1, 1)
+grow_begin = 0.0
+grow_end = 0.0
+vertical = true
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_2qr88"]
+color = Color(1, 1, 1, 1)
+grow_begin = 0.0
+grow_end = 0.0
+
+[node name="ColorRect" type="ColorRect"]
+offset_right = 10.0
+offset_bottom = 10.0
+size_flags_horizontal = 3
+script = ExtResource("1_7l760")
+
+[node name="Outline" type="Control" parent="."]
+modulate = Color(0.351563, 0.351563, 0.351563, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="Panel" parent="Outline"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 1.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxLine_eubtb")
+
+[node name="Panel2" type="Panel" parent="Outline"]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxLine_eubtb")
+
+[node name="Panel3" type="Panel" parent="Outline"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -1.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxLine_2qr88")
+
+[node name="Panel4" type="Panel" parent="Outline"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 1.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxLine_2qr88")
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
