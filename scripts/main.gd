@@ -1,4 +1,3 @@
-extends Control
+class_name Main extends Control
 
-func  _ready() -> void:
-	pass
+var block_canvas : bool = false

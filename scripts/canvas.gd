@@ -37,12 +37,17 @@ var radius : int = 5
 var stroke_start : Vector2i
 var connect_on_release : bool
 
+# References
+var main : Main
+
+
 func _ready() -> void:
+	main = get_tree().current_scene
+	
 	# Create a new image and assign it to the texture
 	image = Image.create_empty(get_viewport().size.x, get_viewport().size.y, false, Image.FORMAT_RGB8)
 	_update_image_size()
 	texture = ImageTexture.create_from_image(image)
-	
 
 
 func _input(event: InputEvent) -> void:
@@ -51,27 +56,6 @@ func _input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
-	# Get and clamp mouse position
-	mpos = get_local_mouse_position().clamp(Vector2i.ZERO, get_rect().size - Vector2.ONE)
-	mouse_in_canvas = 	get_local_mouse_position().x > 0 and get_local_mouse_position().x < get_rect().size.x \
-					and get_local_mouse_position().y > 0 and get_local_mouse_position().y < get_rect().size.y
-	m_delta = prev_mpos - mpos
-	
-	# Drawing input
-	connect_on_release = Input.is_action_pressed("connect")
-	if Input.is_action_just_pressed("click"):
-		stroke_start = mpos
-	
-	if Input.is_action_pressed("click"):
-		_draw_line(_plot_line(prev_mpos, mpos))
-		%Info.connect_label.visible = connect_on_release
-	else:
-		%Info.connect_label.hide()
-	
-	
-	if Input.is_action_just_released("click") and connect_on_release:
-		_draw_line(_plot_line(mpos, stroke_start))
-	
 	# Zoom and brush size input
 	if Input.is_action_pressed("zoom_modifier"):
 		if Input.is_action_just_pressed("increase_size"):
@@ -85,6 +69,41 @@ func _process(delta: float) -> void:
 		if Input.is_action_just_pressed("decrease_size"):
 			brush_size_increment(1)
 	
+	# Get and clamp mouse position
+	mpos = get_local_mouse_position().clamp(Vector2i.ZERO, get_rect().size - Vector2.ONE)
+	var was_in_canvas: bool = mouse_in_canvas
+	mouse_in_canvas = get_local_mouse_position().x > 0 and get_local_mouse_position().x < get_rect().size.x \
+					and get_local_mouse_position().y > 0 and get_local_mouse_position().y < get_rect().size.y
+	m_delta = prev_mpos - mpos
+	
+	if main.block_canvas:
+		prev_mpos = mpos
+		return
+	
+	# Drawing input
+	connect_on_release = Input.is_action_pressed("connect")
+	if Input.is_action_just_pressed("click"):
+		stroke_start = mpos
+	
+	if Input.is_action_pressed("click"):
+		if mouse_in_canvas:
+			if not was_in_canvas: 
+				# If re-entering the canvas, connect to the edge
+				var edge_pos : Vector2i = _clamp_to_edge(prev_mpos)
+				_draw_line(_plot_line(edge_pos, mpos))
+			else: 
+				# Normal drawing behaviour within canvas
+				_draw_line(_plot_line(prev_mpos, mpos))
+		elif was_in_canvas:
+			# If exiting the canvas, draw up to the edge
+			var edge_pos : Vector2i = _clamp_to_edge(mpos)
+			_draw_line(_plot_line(prev_mpos, edge_pos))
+	
+	
+	if Input.is_action_just_released("click") and connect_on_release:
+		_draw_line(_plot_line(mpos, stroke_start))
+	
+	
 	# Update texture periodically if dirty
 	update_timer += delta
 	if dirty and update_timer >= update_interval:
@@ -94,6 +113,21 @@ func _process(delta: float) -> void:
 	
 	# Save the current mouse position for the next frame
 	prev_mpos = mpos
+
+
+func _clamp_to_edge(pos: Vector2i) -> Vector2i:
+	# Clamp a position to the nearest edge of the canvas
+	var clamped_pos : Vector2i = pos.clamp(Vector2i.ZERO, get_rect().size - Vector2.ONE)
+	if pos.x < 0:
+		clamped_pos.x = 0
+	elif pos.x >= get_rect().size.x:
+		clamped_pos.x = int(get_rect().size.x) - 1
+	
+	if pos.y < 0:
+		clamped_pos.y = 0
+	elif pos.y >= get_rect().size.y:
+		clamped_pos.y = int(get_rect().size.y) - 1
+	return clamped_pos
 
 
 ## Image / Viewport functions

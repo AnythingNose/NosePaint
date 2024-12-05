@@ -7,7 +7,7 @@
 [ext_resource type="Material" uid="uid://0asm43bpndbi" path="res://shaders/invert.tres" id="3_vumrx"]
 [ext_resource type="Script" path="res://scripts/palette.gd" id="5_hi4l4"]
 [ext_resource type="FontFile" uid="uid://x8kxss0dmyu8" path="res://fonts/SourceCodePro/SourceCodePro-Regular.otf" id="6_auwyu"]
-[ext_resource type="PackedScene" uid="uid://dbporaxylev2g" path="res://scenes/palette_colour.tscn" id="6_cq0ec"]
+[ext_resource type="PackedScene" uid="uid://dbporaxylev2g" path="res://scenes/colour.tscn" id="6_cq0ec"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_60a27"]
 font = ExtResource("6_auwyu")

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dbporaxylev2g"]
 
-[ext_resource type="Script" path="res://scripts/palette_colour.gd" id="1_7l760"]
+[ext_resource type="Script" path="res://scripts/colour.gd" id="1_7l760"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_eubtb"]
 color = Color(1, 1, 1, 1)
