@@ -112,6 +112,7 @@ size = Vector2i(306, 172)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
+filters = PackedStringArray(".png", ".jpeg", ".jpg")
 use_native_dialog = true
 
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
