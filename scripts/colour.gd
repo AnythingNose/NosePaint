@@ -1,4 +1,4 @@
-class_name ColourButton extends ColorRect
+class_name Colour extends Panel
 
 var main : Main
 var palette : ColourPalette
@@ -15,8 +15,8 @@ func _input(event: InputEvent) -> void:
 
 func _on_mouse_entered() -> void:
 	set_process_input(true)
-	main.block_canvas = true
+	main.block_draw = true
 
 func _on_mouse_exited() -> void:
 	set_process_input(false)
-	main.block_canvas = false
+	main.block_draw = false

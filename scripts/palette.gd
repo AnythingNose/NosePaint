@@ -1,6 +1,6 @@
 class_name ColourPalette extends HBoxContainer
 
-@onready var archetype : ColourButton = $ColorRect
+@onready var archetype : Colour = $Colour
 
 # White is included by the default colour button.
 const colours : Array[String] = [
@@ -42,10 +42,10 @@ const colours : Array[String] = [
 
 func _ready() -> void:
 	for colour : String in colours:
-		var s : ColorRect = archetype.duplicate()
+		var s : Colour = archetype.duplicate()
 		add_child(s)
-		s.color = Color(colour)
+		s.self_modulate = Color(colour)
 	archetype.hide()
 
-func select_colour(button : ColourButton) -> void:
-	%Canvas.colour_primary = button.color
+func select_colour(button : Colour) -> void:
+	%Canvas.colour_primary = button.self_modulate

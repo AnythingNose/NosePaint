@@ -22,7 +22,7 @@ func _process(delta: float) -> void:
 		else:
 			radius_label.visible = false
 
-func push_radius_update(radius : int):
+func push_radius_update(radius : int) -> void:
 	var txt : String = "" if radius == 0 else str(radius)
 	radius_label.text = txt
 	radius_update_timer = 0

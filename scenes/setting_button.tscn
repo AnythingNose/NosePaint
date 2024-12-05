@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://coej3m4iflkq"]
+
+[node name="Setting" type="HBoxContainer"]
+custom_minimum_size = Vector2(0, 21)
+
+[node name="Button" type="Button" parent="."]
+custom_minimum_size = Vector2(21, 0)
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+button_pressed = true
+
+[node name="Spacer" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Setting"

@@ -8,6 +8,8 @@ extends TextureRect
 ## at the cost of making stroke updates feel laggier..
 @export_range(0, 0.1) var update_interval: float = 0.01
 @export_range(0, 1) var zoom_sensitivity: float = 0.1
+@export_range(0, 1) var default_brush_size: int = 4
+@export_range(0, 1) var brush_size_change_sensitivity: int = 1
 
 # Constants
 const min_brush_radius : int = 0
@@ -33,7 +35,7 @@ var pan_start: Vector2  # Starting position for panning
 
 # Drawing
 var colour_primary : Color = Color.WHITE
-var radius : int = 5
+var radius : int = default_brush_size
 var stroke_start : Vector2i
 var connect_on_release : bool
 
@@ -64,10 +66,10 @@ func _process(delta: float) -> void:
 			zoom_increment(-zoom_sensitivity)
 	else:
 		if Input.is_action_just_pressed("increase_size"):
-			brush_size_increment(-1)
+			brush_size_increment(-brush_size_change_sensitivity)
 		
 		if Input.is_action_just_pressed("decrease_size"):
-			brush_size_increment(1)
+			brush_size_increment(brush_size_change_sensitivity)
 	
 	# Get and clamp mouse position
 	mpos = get_local_mouse_position().clamp(Vector2i.ZERO, get_rect().size - Vector2.ONE)
@@ -76,7 +78,7 @@ func _process(delta: float) -> void:
 					and get_local_mouse_position().y > 0 and get_local_mouse_position().y < get_rect().size.y
 	m_delta = prev_mpos - mpos
 	
-	if main.block_canvas:
+	if main.block_draw:
 		prev_mpos = mpos
 		return
 	
@@ -86,6 +88,7 @@ func _process(delta: float) -> void:
 		stroke_start = mpos
 	
 	if Input.is_action_pressed("click"):
+		%Info.connect_label.visible = connect_on_release
 		if mouse_in_canvas:
 			if not was_in_canvas: 
 				# If re-entering the canvas, connect to the edge
@@ -98,11 +101,12 @@ func _process(delta: float) -> void:
 			# If exiting the canvas, draw up to the edge
 			var edge_pos : Vector2i = _clamp_to_edge(mpos)
 			_draw_line(_plot_line(prev_mpos, edge_pos))
-	
+	else:
+		if %Info.connect_label.visible:
+			%Info.connect_label.hide()
 	
 	if Input.is_action_just_released("click") and connect_on_release:
 		_draw_line(_plot_line(mpos, stroke_start))
-	
 	
 	# Update texture periodically if dirty
 	update_timer += delta
@@ -135,7 +139,7 @@ func _update_image_size() -> void:
 	image_size = image.get_size()
 
 
-func zoom_increment(amount : float):
+func zoom_increment(amount : float) -> void:
 	zoom_factor = clamp(zoom_factor + zoom_factor * amount, min_zoom, max_zoom)
 	
 	# Save mouse info before applying scale
@@ -155,15 +159,17 @@ func zoom_increment(amount : float):
 	%Crosshair.queue_redraw()
 
 
-func brush_size_increment(amount : int):
+func brush_size_increment(amount : int) -> void:
 	radius = clamp(radius + amount, min_brush_radius, max_brush_radius)
 	%Crosshair.queue_redraw()
 	%Info.push_radius_update(radius)
+	if not main.block_draw:
+		main.show_mouse(radius == 0)
 
 
 ## Drawing functions
 func _draw_line(points: Array[Vector2i]) -> void:
-	for point in points:
+	for point : Vector2i in points:
 		_draw_step(point)
 
 
@@ -205,7 +211,7 @@ func _draw_horizontal_line(center: Vector2i, start_x: int, end_x: int, y: int) -
 	end_x = min(center.x + end_x, image_size.x - 1) - center.x
 	
 	# Draw the horizontal line
-	for dx in range(start_x, end_x + 1):
+	for dx : int in range(start_x, end_x + 1):
 		image.set_pixel(center.x + dx, y, colour_primary)
 
 
