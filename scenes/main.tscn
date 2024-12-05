@@ -1,9 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://c4phxvqjk60vj"]
+[gd_scene load_steps=16 format=3 uid="uid://c4phxvqjk60vj"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_rj4t4"]
 [ext_resource type="Script" path="res://scripts/canvas.gd" id="2_y2bwc"]
 [ext_resource type="Script" path="res://scripts/crosshair.gd" id="3_0e5ta"]
 [ext_resource type="Script" path="res://scripts/info_follow.gd" id="3_dd5j6"]
+[ext_resource type="Texture2D" uid="uid://tgtx1okdxpr2" path="res://palettes/ufo-50-1x.png" id="3_um082"]
 [ext_resource type="Material" uid="uid://0asm43bpndbi" path="res://shaders/invert.tres" id="3_vumrx"]
 [ext_resource type="Script" path="res://scripts/palette.gd" id="5_hi4l4"]
 [ext_resource type="FontFile" uid="uid://x8kxss0dmyu8" path="res://fonts/SourceCodePro/SourceCodePro-Regular.otf" id="6_auwyu"]
@@ -56,7 +57,6 @@ script = ExtResource("2_y2bwc")
 
 [node name="Palette" type="HBoxContainer" parent="."]
 unique_name_in_owner = true
-visible = false
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -69,6 +69,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 script = ExtResource("5_hi4l4")
+default_palette = ExtResource("3_um082")
 
 [node name="Colour" parent="Palette" instance=ExtResource("6_cq0ec")]
 layout_mode = 2
@@ -114,6 +115,7 @@ text = "Connect"
 label_settings = SubResource("LabelSettings_60a27")
 
 [node name="MenuContainer" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

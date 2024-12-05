@@ -13,6 +13,7 @@ var main : Main
 func _ready() -> void:
 	main = get_tree().current_scene
 	show_menu(open)
+	self.visible = true
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("menu"):
