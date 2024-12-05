@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://bd7y4phsil1xx"]
+[gd_scene load_steps=9 format=3 uid="uid://bd7y4phsil1xx"]
 
 [ext_resource type="Script" path="res://scripts/menu.gd" id="1_ysje5"]
 [ext_resource type="Material" uid="uid://0asm43bpndbi" path="res://shaders/invert.tres" id="2_t4nrw"]
 [ext_resource type="FontFile" uid="uid://csla7xq7lsckw" path="res://fonts/SourceCodePro/SourceCodePro-Bold.otf" id="3_2jc6e"]
+[ext_resource type="FontFile" uid="uid://x8kxss0dmyu8" path="res://fonts/SourceCodePro/SourceCodePro-Regular.otf" id="4_p2725"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_i6e8s"]
 font = ExtResource("3_2jc6e")
@@ -69,7 +70,7 @@ theme_override_constants/separation = 0
 [node name="Spacer" type="Control" parent="Menu/MenuHBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.05
+size_flags_stretch_ratio = 0.03
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Menu/MenuHBox"]
 layout_mode = 2
@@ -276,99 +277,44 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxLine_wbg6l")
 
-[node name="Help" type="ScrollContainer" parent="Menu/MenuHBox"]
+[node name="RichTextLabel" type="RichTextLabel" parent="Menu/MenuHBox"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_fonts/normal_font = ExtResource("4_p2725")
+theme_override_fonts/bold_font = ExtResource("3_2jc6e")
+bbcode_enabled = true
+text = "[p align=center][b]Info[/b]
+[p align=left]
+[b]# Drawing [/b]
+Left click to paint.
+Use scroll wheel to change brush size.
 
-[node name="HelpVBox" type="VBoxContainer" parent="Menu/MenuHBox/Help"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Info Title" type="Label" parent="Menu/MenuHBox/Help/HelpVBox"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-text = "Info"
-label_settings = SubResource("LabelSettings_i6e8s")
-horizontal_alignment = 1
-autowrap_mode = 2
-
-[node name="Spacer" type="Control" parent="Menu/MenuHBox/Help/HelpVBox"]
-custom_minimum_size = Vector2(0, 8)
-layout_mode = 2
-
-[node name="# Drawing" type="Label" parent="Menu/MenuHBox/Help/HelpVBox"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-text = "# Drawing"
-label_settings = SubResource("LabelSettings_1du00")
-autowrap_mode = 2
-
-[node name="Drawing Info" type="Label" parent="Menu/MenuHBox/Help/HelpVBox"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-text = "Left click to paint.
-Use scroll wheel to change brush size."
-autowrap_mode = 2
-
-[node name="Spacer2" type="Control" parent="Menu/MenuHBox/Help/HelpVBox"]
-custom_minimum_size = Vector2(0, 8)
-layout_mode = 2
-
-[node name="# Viewport" type="Label" parent="Menu/MenuHBox/Help/HelpVBox"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-text = "# Viewport"
-label_settings = SubResource("LabelSettings_1du00")
-autowrap_mode = 2
-
-[node name="Viewport Info" type="Label" parent="Menu/MenuHBox/Help/HelpVBox"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-text = "Right click & drag to pan view.
+[b]# Viewport[/b]
+Right click & drag to pan view.
 Hold shift or ctrl then scroll to zoom.
-Press F11 to toggle fullscreen."
-autowrap_mode = 2
 
-[node name="Spacer3" type="Control" parent="Menu/MenuHBox/Help/HelpVBox"]
-custom_minimum_size = Vector2(0, 8)
-layout_mode = 2
+[b]# Shortcuts[/b]
+Ctrl+N to create a new image.
+Ctrl+S to quicksave current image.
+Ctrl+Shift+S to save current image.
+Ctrl+O to open an image.
+F11 to toggle fullscreen.
 
-[node name="# Functions" type="Label" parent="Menu/MenuHBox/Help/HelpVBox"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-text = "# Functions"
-label_settings = SubResource("LabelSettings_1du00")
-autowrap_mode = 2
+[b]# Functions[/b]
+Hold C before you stop drawing to connect your stroke's end point to its start point.
 
-[node name="Function Info" type="Label" parent="Menu/MenuHBox/Help/HelpVBox"]
-custom_minimum_size = Vector2(1, 1)
-layout_mode = 2
-text = "Hold C before you stop drawing to connect your stroke's end point to its start point."
-autowrap_mode = 2
-
-[node name="Spacer4" type="Control" parent="Menu/MenuHBox/Help/HelpVBox"]
-custom_minimum_size = Vector2(0, 8)
-layout_mode = 2
-
-[node name="Credits" type="Label" parent="Menu/MenuHBox/Help/HelpVBox"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-text = "# Credits"
-label_settings = SubResource("LabelSettings_1du00")
-autowrap_mode = 2
-
-[node name="Label5" type="Label" parent="Menu/MenuHBox/Help/HelpVBox"]
-custom_minimum_size = Vector2(1, 1)
-layout_mode = 2
-text = "Made by Jo Haynes & Anything Nose Productions
+[b]# Credits[/b]
+Made by Jo Haynes & Anything Nose Productions
 Font: SourceCodePro by Adobe
 Default colour palette: UFO 50 by UFO 50"
-autowrap_mode = 2
+scroll_following = true
+selection_enabled = true
 
 [node name="Spacer2" type="Control" parent="Menu/MenuHBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.05
+size_flags_stretch_ratio = 0.03
 
 [connection signal="pressed" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/NewImageHBox/NewImage" to="." method="_on_new_image_pressed"]
 [connection signal="pressed" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/FileButtons/OpenImage" to="." method="_on_open_image_pressed"]

@@ -1,6 +1,8 @@
 class_name Main extends Control
 
 @onready var file_dialog: FileDialog = $FileDialog
+@onready var canvas: Canvas = %Canvas
+
 
 var block_draw : bool = false:
 	set(value):
@@ -33,7 +35,7 @@ func file_save_dialog() -> void:
 func _on_file_dialog_file_selected(path: String) -> void:
 	match file_dialog.file_mode:
 		FileDialog.FILE_MODE_OPEN_FILE:
-			print("open" + path)
+			canvas.new_texture(path)
 		FileDialog.FILE_MODE_SAVE_FILE:
-			print("save"+ path)
+			canvas.image.save_png(path)
 	

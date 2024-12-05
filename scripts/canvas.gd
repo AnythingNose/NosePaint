@@ -1,4 +1,4 @@
-extends TextureRect
+class_name Canvas extends TextureRect
 
 # User-facing parameters
 ## Defines how stingy we are when filling in a brush stroke. Lower values are more precise but less performant.
@@ -14,7 +14,7 @@ extends TextureRect
 # Constants
 const min_brush_radius : int = 0
 const max_brush_radius : int = 64
-const min_zoom : float = 1
+const min_zoom : float = 0.1
 const max_zoom : float = 10
 
 # Image and Rendering
@@ -22,6 +22,7 @@ var image : Image
 var image_size : Vector2i
 var dirty : bool = false
 var update_timer: float = 0.0
+var rect_size : Vector2i
 
 # Mouse Position
 var mpos : Vector2i
@@ -50,11 +51,24 @@ func _ready() -> void:
 	image = Image.create_empty(get_viewport().size.x, get_viewport().size.y, false, Image.FORMAT_RGB8)
 	_update_image_size()
 	texture = ImageTexture.create_from_image(image)
+	_update_rect_size()
+
+func new_texture(path : String) -> void:
+	image.load(path)
+	_update_image_size()
+	texture = ImageTexture.create_from_image(image)
+	size = Vector2(image_size)
+	_center_canvas()
+	_update_rect_size()
+	dirty = true
 
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.is_action_pressed("alt_click"):
 		position += event.relative
+	if event is InputEventMouseButton and event.double_click:
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			_center_canvas()
 
 
 func _process(delta: float) -> void:
@@ -72,10 +86,10 @@ func _process(delta: float) -> void:
 			brush_size_increment(brush_size_change_sensitivity)
 	
 	# Get and clamp mouse position
-	mpos = get_local_mouse_position().clamp(Vector2i.ZERO, get_rect().size - Vector2.ONE)
+	mpos = get_local_mouse_position().clamp(Vector2i.ZERO, rect_size)
 	var was_in_canvas: bool = mouse_in_canvas
-	mouse_in_canvas = get_local_mouse_position().x > 0 and get_local_mouse_position().x < get_rect().size.x \
-					and get_local_mouse_position().y > 0 and get_local_mouse_position().y < get_rect().size.y
+	mouse_in_canvas = get_local_mouse_position().x > 0 and get_local_mouse_position().x < rect_size.x \
+					and get_local_mouse_position().y > 0 and get_local_mouse_position().y < rect_size.y
 	m_delta = prev_mpos - mpos
 	
 	if main.block_draw:
@@ -121,22 +135,43 @@ func _process(delta: float) -> void:
 
 func _clamp_to_edge(pos: Vector2i) -> Vector2i:
 	# Clamp a position to the nearest edge of the canvas
-	var clamped_pos : Vector2i = pos.clamp(Vector2i.ZERO, get_rect().size - Vector2.ONE)
+	var clamped_pos : Vector2i = pos.clamp(Vector2i.ZERO, rect_size)
 	if pos.x < 0:
 		clamped_pos.x = 0
-	elif pos.x >= get_rect().size.x:
-		clamped_pos.x = int(get_rect().size.x) - 1
+	elif pos.x >= rect_size.x:
+		clamped_pos.x = rect_size.x
 	
 	if pos.y < 0:
 		clamped_pos.y = 0
-	elif pos.y >= get_rect().size.y:
-		clamped_pos.y = int(get_rect().size.y) - 1
+	elif pos.y >= rect_size.y:
+		clamped_pos.y = rect_size.y
 	return clamped_pos
 
 
 ## Image / Viewport functions
 func _update_image_size() -> void:
 	image_size = image.get_size()
+
+func _update_rect_size() -> void:
+	rect_size = (get_rect().size - Vector2.ONE) / Vector2(zoom_factor, zoom_factor)
+
+func _center_canvas() -> void:
+	# Reset zoom to fit the image within the viewport
+	var viewport_size: Vector2 = get_viewport().size
+	var image_ratio: float = float(image_size.x) / float(image_size.y)
+	var viewport_ratio: float = float(viewport_size.x) / float(viewport_size.y)
+	
+	if image_ratio > viewport_ratio:
+		# Image is wider than viewport
+		zoom_factor = viewport_size.x / float(image_size.x)
+	else:
+		# Image is taller than or matches viewport ratio
+		zoom_factor = viewport_size.y / float(image_size.y)
+	
+	# Apply the zoom
+	scale = Vector2(zoom_factor, zoom_factor)
+	# Center position
+	position = Vector2(get_viewport().size / 2) - (size * zoom_factor / 2)
 
 
 func zoom_increment(amount : float) -> void:
@@ -156,6 +191,7 @@ func zoom_increment(amount : float) -> void:
 	# Apply offset so that we always zoom in on the mouse
 	position += offset * scale
 	
+	_update_rect_size()
 	%Crosshair.queue_redraw()
 
 
@@ -175,7 +211,8 @@ func _draw_line(points: Array[Vector2i]) -> void:
 
 func _draw_step(point: Vector2i) -> void:
 	if radius == 0:
-		image.set_pixel(point.x, point.y, colour_primary)
+		if point.x < image_size.x and point.y < image_size.y:
+			image.set_pixel(point.x, point.y, colour_primary)
 	else:
 		# Adapted from this explanation of the midpoint circle algorithm.
 		# https://youtu.be/hpiILbMkF9w?list=PLuc6EyJgI1kzE1Fxz6JlussiemJNPjBmX
