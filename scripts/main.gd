@@ -2,7 +2,7 @@ class_name Main extends Control
 
 @onready var file_dialog: FileDialog = $FileDialog
 @onready var canvas: Canvas = %Canvas
-
+@onready var menu: Menu = $MenuContainer
 
 var block_draw : bool = false:
 	set(value):
@@ -15,6 +15,16 @@ func _ready() -> void:
 func show_mouse(should_show : bool) -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if should_show or (%Canvas.radius == 0) else Input.MOUSE_MODE_HIDDEN
 	%Crosshair.visible = !should_show and (%Canvas.radius != 0)
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("new_image"):
+		pass
+	elif event.is_action_pressed("open_image"):
+		file_open_dialog()
+	elif event.is_action_pressed("quicksave_image"):
+		pass
+	elif event.is_action_pressed("save_image"):
+		file_save_dialog()
 
 # File save / load functions
 func file_open_dialog() -> void:

@@ -1,4 +1,4 @@
-extends Control
+class_name Menu extends Control
 
 @onready var menu: Panel = $Menu
 @onready var menu_label: Label = $MenuLabel
