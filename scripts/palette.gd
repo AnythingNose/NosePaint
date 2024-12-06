@@ -6,18 +6,29 @@ class_name ColourPalette extends VBoxContainer
 @onready var container: HBoxContainer = $PaletteArea/PaletteContainer
 @onready var archetype: Colour = $PaletteArea/PaletteContainer/Colour
 
-# TODO: Fade the pallette UI out when the user is drawing
+const FADE_IN_DELAY : float = 0.33
+const FADE_IN_DURATION : float = 0.5
+const FADE_OUT_DURATION : float = 0.5
+
 var main : Main
 var mouse_inside : bool = false
+var previously_drawing : bool = false
+var show_palette : bool = true
 
+var modulate_target : float = 1.0
 var can_drag : bool
 var is_dragging : bool
-
 var preferred_height : float
+var fade_in_delay_timer : float
+var fading_in : bool
+
+# TODO Fix the weird scaling on the dragging due to using stretch ratio.
 
 func _ready() -> void:
 	main = get_tree().current_scene
 	regenerate_palette(parse_palette(default_palette))
+	%Canvas.on_draw_start.connect(draw_start)
+	%Canvas.on_draw_end.connect(draw_end)
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("click"):
@@ -26,10 +37,13 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_released("click"):
 		is_dragging = false
 
-# TODO Light cleanup
-# TODO Fix the weird scaling on the dragging due to using stretch ratio.
 func _process(delta: float) -> void:
-	var mouse_currently_inside : bool = area.get_rect().has_point(get_global_mouse_position()) or is_dragging and not main.menu.open
+	modulate.a = modulate_target
+	
+	var mouse_currently_inside : bool = \
+	area.get_rect().has_point(get_global_mouse_position()) \
+	and not main.menu.open and not %Canvas.drawing
+	
 	if mouse_currently_inside:
 		if not mouse_inside:
 			mouse_inside = true
@@ -39,12 +53,24 @@ func _process(delta: float) -> void:
 			mouse_inside = false
 			main.block_draw = mouse_inside
 	
-	
-	var mouse_pos : Vector2 = get_global_mouse_position()
-	
-	if is_dragging:
-		var mouse_y_ratio : float = clamp(inverse_lerp(get_viewport().size.y, get_viewport().size.y / 2, mouse_pos.y),0,1)
-		area.size_flags_stretch_ratio = mouse_y_ratio
+	if fading_in:
+		if fade_in_delay_timer < FADE_IN_DELAY:
+			fade_in_delay_timer += delta
+		else:
+			draw_fade_in()
+
+func draw_start() -> void:
+	var tween : Tween = get_tree().create_tween()
+	tween.tween_property(self, "modulate_target", 0, FADE_OUT_DURATION)
+
+func draw_end() -> void:
+	fade_in_delay_timer = 0
+	fading_in = true
+
+func draw_fade_in() -> void:
+	fading_in = false
+	var tween : Tween = get_tree().create_tween()
+	tween.tween_property(self, "modulate_target", 1, FADE_OUT_DURATION)
 
 func parse_palette(tex : Texture2D) -> Array[Color]:
 	var img : Image = tex.get_image()
@@ -64,9 +90,9 @@ func regenerate_palette(colours : Array[Color]) -> void:
 func select_colour(button : Colour) -> void:
 	%Canvas.colour_primary = button.self_modulate
 
+# Signal Callbacks
 func _on_drag_area_mouse_entered() -> void:
 	can_drag = true
-
 
 func _on_drag_area_mouse_exited() -> void:
 	can_drag = false

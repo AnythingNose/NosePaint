@@ -281,6 +281,7 @@ theme_override_styles/panel = SubResource("StyleBoxLine_wbg6l")
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+focus_mode = 2
 theme_override_fonts/normal_font = ExtResource("4_p2725")
 theme_override_fonts/bold_font = ExtResource("3_2jc6e")
 bbcode_enabled = true

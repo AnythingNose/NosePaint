@@ -61,7 +61,7 @@ size_flags_vertical = 3
 [node name="PaletteArea" type="VBoxContainer" parent="Palette"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.07
+size_flags_stretch_ratio = 0.05
 theme_override_constants/separation = 0
 
 [node name="DragArea" type="ColorRect" parent="Palette/PaletteArea"]
@@ -141,6 +141,8 @@ offset_bottom = 40.0
 
 [connection signal="mouse_entered" from="Palette" to="Palette" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="Palette" to="Palette" method="_on_mouse_exited"]
+[connection signal="mouse_entered" from="Palette/PaletteArea" to="Palette" method="_on_palette_area_mouse_entered"]
+[connection signal="mouse_exited" from="Palette/PaletteArea" to="Palette" method="_on_palette_area_mouse_exited"]
 [connection signal="mouse_entered" from="Palette/PaletteArea/DragArea" to="Palette" method="_on_drag_area_mouse_entered"]
 [connection signal="mouse_exited" from="Palette/PaletteArea/DragArea" to="Palette" method="_on_drag_area_mouse_exited"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]

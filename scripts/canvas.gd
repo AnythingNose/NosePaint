@@ -11,6 +11,9 @@ class_name Canvas extends TextureRect
 @export_range(0, 1) var default_brush_size: int = 4
 @export_range(0, 1) var brush_size_change_sensitivity: int = 1
 
+signal on_draw_start
+signal on_draw_end
+
 # Constants
 const min_brush_radius : int = 0
 const max_brush_radius : int = 64
@@ -39,6 +42,9 @@ var colour_primary : Color = Color.WHITE
 var radius : int = default_brush_size
 var stroke_start : Vector2i
 var connect_on_release : bool
+
+var drawing : bool = false
+var prev_drawing : bool = false
 
 # References
 var main : Main
@@ -92,7 +98,16 @@ func _process(delta: float) -> void:
 					and get_local_mouse_position().y > 0 and get_local_mouse_position().y < rect_size.y
 	m_delta = prev_mpos - mpos
 	
-	if main.block_draw:
+	if drawing:
+		if not prev_drawing:
+			on_draw_start.emit()
+			prev_drawing = true
+	else:
+		if prev_drawing:
+			on_draw_end.emit()
+			prev_drawing = false
+	
+	if main.block_draw or %Palette.mouse_inside:
 		prev_mpos = mpos
 		return
 	
@@ -103,6 +118,9 @@ func _process(delta: float) -> void:
 	
 	if Input.is_action_pressed("click"):
 		%Info.connect_label.visible = connect_on_release
+		
+		drawing = mpos != stroke_start
+		
 		if mouse_in_canvas:
 			if not was_in_canvas: 
 				# If re-entering the canvas, connect to the edge
@@ -119,8 +137,10 @@ func _process(delta: float) -> void:
 		if %Info.connect_label.visible:
 			%Info.connect_label.hide()
 	
-	if Input.is_action_just_released("click") and connect_on_release:
-		_draw_line(_plot_line(mpos, stroke_start))
+	if Input.is_action_just_released("click"):
+		drawing = false
+		if connect_on_release:
+			_draw_line(_plot_line(mpos, stroke_start))
 	
 	# Update texture periodically if dirty
 	update_timer += delta
