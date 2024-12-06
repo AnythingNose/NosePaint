@@ -106,6 +106,7 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
+theme_override_fonts/font = ExtResource("3_2jc6e")
 text = "New Image"
 
 [node name="Spacer2" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/NewImageHBox"]
@@ -157,18 +158,21 @@ alignment = 1
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
+theme_override_fonts/font = ExtResource("3_2jc6e")
 text = "Open"
 
 [node name="SaveImage" type="Button" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/FileButtons"]
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
+theme_override_fonts/font = ExtResource("3_2jc6e")
 text = "Save"
 
 [node name="SaveImageAs" type="Button" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/FileButtons"]
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
+theme_override_fonts/font = ExtResource("3_2jc6e")
 text = "Save As"
 
 [node name="Spacer2" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport"]
