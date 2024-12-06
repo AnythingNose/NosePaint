@@ -6,15 +6,13 @@ class_name InfoFollow extends Control
 @export var x_offset : float = 10
 @export var radius_update_lifetime : float = 0.5
 
-var offset : float
 var brush_offset : float
 
 var radius_update_timer : float = 0
 
 func _process(delta: float) -> void:
-	offset = x_offset * %Canvas.zoom_factor
 	brush_offset = %Canvas.radius * %Canvas.zoom_factor
-	global_position = get_global_mouse_position() + Vector2(offset + brush_offset, 0)
+	global_position = get_global_mouse_position() + Vector2(x_offset + brush_offset, 0)
 	
 	if radius_label.visible:
 		if radius_update_timer < radius_update_lifetime:
@@ -23,7 +21,9 @@ func _process(delta: float) -> void:
 			radius_label.visible = false
 
 func push_radius_update(radius : int) -> void:
-	var txt : String = "" if radius == 0 else str(radius)
-	radius_label.text = txt
+	# As far as the canvas is concerned, a brush size of 1 means the smallest circle possible
+	# (a cross made up of 5 pixels). It's more accurate for a brush size of 1 to be 1 pixel,
+	# so we cheat it here.
+	radius_label.text = str(radius + 1)
 	radius_update_timer = 0
 	radius_label.visible = true

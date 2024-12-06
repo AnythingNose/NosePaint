@@ -5,6 +5,8 @@ class_name Menu extends Control
 
 # Setting buttons 
 @onready var fullscreen_button: Button = $Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox/Fullscreen/Fullscreen
+@onready var new_dimensions_x: SpinBox = $"Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/NewImageHBox/Dimensions X"
+@onready var new_dimensions_y: SpinBox = $"Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/NewImageHBox/Dimensions Y"
 
 var main : Main
 var open : bool = false
@@ -48,7 +50,7 @@ func _on_hide_menu_label_toggled(toggled_on: bool) -> void:
 
 
 func _on_new_image_pressed() -> void:
-	pass # Replace with function body.
+	main.new_file()
 
 
 func _on_open_image_pressed() -> void:
@@ -56,8 +58,8 @@ func _on_open_image_pressed() -> void:
 
 
 func _on_save_image_pressed() -> void:
-	main.file_save_dialog()
+	main.quicksave_file()
 
 
 func _on_save_image_as_pressed() -> void:
-	pass # Replace with function body.
+	main.file_save_dialog()

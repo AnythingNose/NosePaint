@@ -16,7 +16,7 @@ signal on_draw_end
 
 # Constants
 const min_brush_radius : int = 0
-const max_brush_radius : int = 64
+const max_brush_radius : int = 63
 const min_zoom : float = 0.1
 const max_zoom : float = 10
 
@@ -53,19 +53,26 @@ var main : Main
 func _ready() -> void:
 	main = get_tree().current_scene
 	
-	# Create a new image and assign it to the texture
-	image = Image.create_empty(get_viewport().size.x, get_viewport().size.y, false, Image.FORMAT_RGB8)
-	_update_image_size()
-	texture = ImageTexture.create_from_image(image)
-	_update_rect_size()
+	new_blank_image(get_viewport().size)
 
-func new_texture(path : String) -> void:
+func new_blank_image(dimensions: Vector2i) -> void:
+	# Create a new image and assign it to the texture
+	image = Image.create_empty(dimensions.x, dimensions.y, false, Image.FORMAT_RGB8)
+	init_canvas()
+
+
+func new_texture_from_path(path : String) -> void:
 	image.load(path)
+	init_canvas()
+
+
+func init_canvas() -> void:
 	_update_image_size()
 	texture = ImageTexture.create_from_image(image)
 	size = Vector2(image_size)
 	_center_canvas()
 	_update_rect_size()
+	%Crosshair.queue_redraw()
 	dirty = true
 
 
@@ -173,7 +180,7 @@ func _update_image_size() -> void:
 	image_size = image.get_size()
 
 func _update_rect_size() -> void:
-	rect_size = (get_rect().size - Vector2.ONE) / Vector2(zoom_factor, zoom_factor)
+	rect_size = (get_rect().size) / Vector2(zoom_factor, zoom_factor)
 
 func _center_canvas() -> void:
 	# Reset zoom to fit the image within the viewport
