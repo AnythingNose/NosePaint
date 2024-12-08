@@ -4,7 +4,11 @@ class_name Main extends Control
 @onready var canvas: Canvas = %Canvas
 @onready var menu: Menu = $MenuContainer
 
+@export var default_palettes : Array[CompressedTexture2D]
+
+const palette_path : String = "user://palettes"
 var current_image_path : String = ""
+var palettes : Dictionary = {} # Key = filename, Value = texture
 
 var block_draw : bool = false:
 	set(value):
@@ -13,6 +17,8 @@ var block_draw : bool = false:
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	
+	read_palette_folder()
 
 func show_mouse(should_show : bool) -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if should_show or (%Canvas.radius == 0) else Input.MOUSE_MODE_HIDDEN
@@ -27,6 +33,43 @@ func _input(event: InputEvent) -> void:
 		quicksave_file()
 	elif event.is_action_pressed("save_image"):
 		file_save_dialog()
+
+# Palette folder
+func read_palette_folder() -> void:
+	# Check for palette folder
+	var folder : DirAccess = DirAccess.open("user://")
+	if folder.dir_exists(palette_path):
+		print("Found user palette folder.")
+	else:
+		print("Creating user palette folder as it was not found.")
+		folder.make_dir(palette_path)
+		
+		# Copy default palettes to user palette folder
+		for palette : CompressedTexture2D in default_palettes:
+			palette.get_image().save_png(palette_path+"/"+get_palette_filename(palette.resource_path))
+		
+		read_palette_folder() # Restart
+		return
+	
+	# Read it
+	folder = DirAccess.open(palette_path)
+	for file : String in folder.get_files():
+		if file.get_extension() == "png":
+			var img : Image = Image.load_from_file(palette_path+"/"+file)
+			var tex : Texture2D = ImageTexture.create_from_image(img)
+			palettes[file] = tex
+	
+	menu.update_palette_list()
+
+# Palette functions
+func get_palette_filename(path : String) -> String:
+	var s : String = path.replace("res://palettes/", "")
+	s.replace("user://palettes/", "")
+	return s
+
+func load_palette(filename : String) -> void:
+	%Palette.regenerate_palette(%Palette.parse_palette(palettes[filename]))
+
 
 # File save / load functions
 func new_file() -> void:

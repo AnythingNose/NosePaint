@@ -197,8 +197,26 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
-[node name="Divider Line2" type="Panel" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer"]
+[node name="PaletteList" type="ItemList" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes"]
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 0
+auto_height = true
+item_count = 4
+max_columns = 0
+same_column_width = true
+icon_mode = 0
+fixed_icon_size = Vector2i(256, 10)
+item_0/text = "TEST"
+item_1/text = "2223"
+item_2/text = "41"
+
+[node name="CenterContainer" type="CenterContainer" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes"]
 visible = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Divider Line2" type="Panel" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 3)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxLine_hnck6")
@@ -305,6 +323,7 @@ Use scroll wheel to change brush size.
 
 [b]# Viewport[/b]
 Right click & drag to pan view.
+Double right click to center viewport.
 Hold shift or ctrl then scroll to zoom.
 
 [b]# Shortcuts[/b]
@@ -333,5 +352,6 @@ size_flags_stretch_ratio = 0.03
 [connection signal="pressed" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/FileButtons/OpenImage" to="." method="_on_open_image_pressed"]
 [connection signal="pressed" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/FileButtons/SaveImage" to="." method="_on_save_image_pressed"]
 [connection signal="pressed" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/FileButtons/SaveImageAs" to="." method="_on_save_image_as_pressed"]
+[connection signal="item_selected" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes/PaletteList" to="." method="_on_palette_list_item_selected"]
 [connection signal="toggled" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox/Fullscreen/Fullscreen" to="." method="_on_fullscreen_toggled"]
 [connection signal="toggled" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox/HideMenuLabel/HideMenuLabel" to="." method="_on_hide_menu_label_toggled"]

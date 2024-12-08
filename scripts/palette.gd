@@ -1,49 +1,58 @@
-class_name ColourPalette extends VBoxContainer
+class_name ColourPalette extends VSplitContainer
 
-@export var default_palette : Texture2D
-
-@onready var area: VBoxContainer = $PaletteArea
-@onready var container: HBoxContainer = $PaletteArea/PaletteContainer
-@onready var archetype: Colour = $PaletteArea/PaletteContainer/Colour
+@onready var container: HBoxContainer = $PaletteContainer
+@onready var archetype: Colour = $PaletteContainer/Colour
 
 const FADE_IN_DELAY : float = 0.33
 const FADE_IN_DURATION : float = 0.5
 const FADE_OUT_DURATION : float = 0.5
 
+const palette_size_margin : int = 15
+
 var main : Main
 var mouse_inside : bool = false
-var previously_drawing : bool = false
-var show_palette : bool = true
 
 var modulate_target : float = 1.0
-var can_drag : bool
-var is_dragging : bool
-var preferred_height : float
 var fade_in_delay_timer : float
 var fading_in : bool
+var preferred_height : float
 
-# TODO Fix the weird scaling on the dragging due to using stretch ratio.
+var dragging_split : bool = false
+var r : Rect2
 
 func _ready() -> void:
 	main = get_tree().current_scene
-	regenerate_palette(parse_palette(default_palette))
+	regenerate_palette(parse_palette(main.default_palettes[0]))
+	get_tree().get_root().size_changed.connect(update_split_offset) 
 	%Canvas.on_draw_start.connect(draw_start)
 	%Canvas.on_draw_end.connect(draw_end)
 
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("click"):
-		if can_drag:
-			is_dragging = true
-	if event.is_action_released("click"):
-		is_dragging = false
+func update_split_offset():
+	split_offset = clampi(split_offset,-(get_viewport_rect().size.y / 2) + palette_size_margin, get_viewport_rect().size.y / 2 - palette_size_margin)
 
 func _process(delta: float) -> void:
+	if main.menu.open:
+		return
+	
 	modulate.a = modulate_target
 	
-	var mouse_currently_inside : bool = \
-	area.get_rect().has_point(get_global_mouse_position()) \
-	and not main.menu.open and not %Canvas.drawing
+	r = Rect2(
+		0,
+		(get_viewport_rect().size.y / 2) + split_offset - get_theme_constant("minimum_grab_thickness") * 0.5,
+		get_viewport_rect().size.x,
+		get_theme_constant("minimum_grab_thickness")
+	)
+	var can_drag_split : bool = r.has_point(get_global_mouse_position())
 	
+	if dragging_split and Input.is_action_just_released("click"):
+		dragging_split = false
+	
+	
+	var mouse_currently_inside : bool = \
+	(container.get_rect().has_point(get_global_mouse_position()) \
+	or can_drag_split or dragging_split) \
+	and not %Canvas.drawing
+
 	if mouse_currently_inside:
 		if not mouse_inside:
 			mouse_inside = true
@@ -80,19 +89,22 @@ func parse_palette(tex : Texture2D) -> Array[Color]:
 	return colours
 
 func regenerate_palette(colours : Array[Color]) -> void:
+	for child : Node in container.get_children():
+		if child != archetype:
+			child.queue_free()
+	
 	for colour : Color in colours:
 		var s : Colour = archetype.duplicate()
 		container.add_child(s)
 		s.palette = self
 		s.self_modulate = colour
+		s.show()
 	archetype.hide()
 
 func select_colour(button : Colour) -> void:
 	%Canvas.colour_primary = button.self_modulate
 
 # Signal Callbacks
-func _on_drag_area_mouse_entered() -> void:
-	can_drag = true
-
-func _on_drag_area_mouse_exited() -> void:
-	can_drag = false
+func _on_dragged(_offset: int) -> void: #Split container dragged
+	dragging_split = true
+	update_split_offset()
