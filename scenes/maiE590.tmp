@@ -1,0 +1,242 @@
+[gd_scene load_steps=27 format=3 uid="uid://c4phxvqjk60vj"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_rj4t4"]
+[ext_resource type="Script" path="res://scripts/canvas.gd" id="2_y2bwc"]
+[ext_resource type="Script" path="res://scripts/crosshair.gd" id="3_0e5ta"]
+[ext_resource type="Script" path="res://scripts/info_follow.gd" id="3_dd5j6"]
+[ext_resource type="Texture2D" uid="uid://5klur1xvubj6" path="res://palettes/paper-garden-1x.png" id="3_il4jk"]
+[ext_resource type="Texture2D" uid="uid://bq3r3plvxmtf1" path="res://palettes/apollo-1x.png" id="3_u0a1j"]
+[ext_resource type="Texture2D" uid="uid://tgtx1okdxpr2" path="res://palettes/ufo-50-1x.png" id="3_um082"]
+[ext_resource type="Material" uid="uid://0asm43bpndbi" path="res://shaders/invert.tres" id="3_vumrx"]
+[ext_resource type="Texture2D" uid="uid://hmaex1873to8" path="res://palettes/endesga-32-1x.png" id="4_uhmu6"]
+[ext_resource type="Script" path="res://scripts/palette.gd" id="5_hi4l4"]
+[ext_resource type="Texture2D" uid="uid://slburmdgf0vi" path="res://palettes/endesga-64-1x.png" id="5_wwewh"]
+[ext_resource type="FontFile" uid="uid://x8kxss0dmyu8" path="res://fonts/SourceCodePro/SourceCodePro-Regular.otf" id="6_auwyu"]
+[ext_resource type="PackedScene" uid="uid://dbporaxylev2g" path="res://scenes/colour.tscn" id="6_cq0ec"]
+[ext_resource type="Texture2D" uid="uid://bk3aawjl1ubo3" path="res://palettes/eulbink-1x.png" id="6_epfms"]
+[ext_resource type="Texture2D" uid="uid://7ndv8lcumatg" path="res://palettes/lospec500-1x.png" id="7_nij4g"]
+[ext_resource type="Texture2D" uid="uid://b2yheknh8domt" path="res://palettes/minecraft-64-1x.png" id="8_xv70h"]
+[ext_resource type="Texture2D" uid="uid://dknwwmp5phbia" path="res://palettes/nintendo-entertainment-system-1x.png" id="9_3cfaf"]
+[ext_resource type="PackedScene" uid="uid://bd7y4phsil1xx" path="res://scenes/menu_container.tscn" id="10_ee5xk"]
+[ext_resource type="Texture2D" uid="uid://0qbycgx7yubu" path="res://palettes/pico-8-1x.png" id="11_6m3m2"]
+[ext_resource type="Texture2D" uid="uid://bxsguaquoqt8k" path="res://palettes/resurrect-64-1x.png" id="12_pcsa2"]
+[ext_resource type="Texture2D" uid="uid://bfn1wg2ubuh21" path="res://palettes/windows-95-256-colours-1x.png" id="13_8732v"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_h058i"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_xftai"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xc6ar"]
+content_margin_left = 1.0
+content_margin_top = 1.0
+content_margin_right = 1.0
+content_margin_bottom = 1.0
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_20mmk"]
+bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_60a27"]
+font = ExtResource("6_auwyu")
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_rj4t4")
+default_palettes = Array[CompressedTexture2D]([ExtResource("3_um082"), ExtResource("3_u0a1j"), ExtResource("4_uhmu6"), ExtResource("5_wwewh"), ExtResource("6_epfms"), ExtResource("7_nij4g"), ExtResource("8_xv70h"), ExtResource("9_3cfaf"), ExtResource("3_il4jk"), ExtResource("11_6m3m2"), ExtResource("12_pcsa2"), ExtResource("13_8732v")])
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+unique_name_in_owner = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1280, 720)
+render_target_update_mode = 4
+
+[node name="Canvas" type="TextureRect" parent="SubViewportContainer/SubViewport"]
+unique_name_in_owner = true
+texture_filter = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -640.0
+offset_top = -360.0
+offset_right = 640.0
+offset_bottom = 360.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_y2bwc")
+
+[node name="Palette" type="VSplitContainer" parent="SubViewportContainer/SubViewport"]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+theme_override_constants/minimum_grab_thickness = 6
+theme_override_icons/grabber = SubResource("ImageTexture_h058i")
+split_offset = 333
+script = ExtResource("5_hi4l4")
+
+[node name="Spacer" type="Control" parent="SubViewportContainer/SubViewport/Palette"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PaletteContainer" type="HBoxContainer" parent="SubViewportContainer/SubViewport/Palette"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="Colour" parent="SubViewportContainer/SubViewport/Palette/PaletteContainer" instance=ExtResource("6_cq0ec")]
+layout_mode = 2
+
+[node name="Crosshair" type="Control" parent="."]
+unique_name_in_owner = true
+material = ExtResource("3_vumrx")
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_0e5ta")
+
+[node name="Info" type="Control" parent="."]
+unique_name_in_owner = true
+material = ExtResource("3_vumrx")
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("3_dd5j6")
+
+[node name="Eyedropper" type="HBoxContainer" parent="Info"]
+material = ExtResource("3_vumrx")
+custom_minimum_size = Vector2(84, 21)
+layout_mode = 2
+offset_top = -10.0
+offset_right = 84.0
+offset_bottom = 46.485
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="LineSpacer" type="Control" parent="Info/Eyedropper"]
+use_parent_material = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Line" type="Panel" parent="Info/Eyedropper/LineSpacer"]
+use_parent_material = true
+clip_contents = true
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxLine_xftai")
+
+[node name="ColourOutline" type="Panel" parent="Info/Eyedropper"]
+use_parent_material = true
+clip_contents = true
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_xc6ar")
+
+[node name="Colour" type="Panel" parent="Info/Eyedropper/ColourOutline"]
+clip_contents = true
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = -1.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_20mmk")
+
+[node name="Tooltips" type="VBoxContainer" parent="Info"]
+use_parent_material = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -42.0
+offset_right = 42.0
+offset_bottom = 187.0
+grow_horizontal = 2
+theme_override_constants/separation = 0
+
+[node name="RadiusLabel" type="Label" parent="Info/Tooltips"]
+use_parent_material = true
+layout_mode = 2
+text = "Radius"
+label_settings = SubResource("LabelSettings_60a27")
+horizontal_alignment = 1
+
+[node name="AverageLabel" type="Label" parent="Info/Tooltips"]
+use_parent_material = true
+layout_mode = 2
+text = "Average"
+label_settings = SubResource("LabelSettings_60a27")
+horizontal_alignment = 1
+
+[node name="ConnectLabel" type="Label" parent="Info/Tooltips"]
+use_parent_material = true
+layout_mode = 2
+text = "Connect"
+label_settings = SubResource("LabelSettings_60a27")
+horizontal_alignment = 1
+
+[node name="MenuContainer" parent="." instance=ExtResource("10_ee5xk")]
+visible = false
+layout_mode = 1
+
+[node name="FileDialog" type="FileDialog" parent="."]
+auto_translate_mode = 1
+title = "Open a File"
+position = Vector2i(0, 36)
+size = Vector2i(306, 172)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+use_native_dialog = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[connection signal="dragged" from="SubViewportContainer/SubViewport/Palette" to="SubViewportContainer/SubViewport/Palette" method="_on_dragged"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]

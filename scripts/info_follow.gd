@@ -20,6 +20,7 @@ var eyedropping : bool:
 		_update_dropper_visibility()
 
 func _ready() -> void:
+	radius_label.visible = false
 	_update_dropper_visibility()
 
 func _process(delta: float) -> void:
