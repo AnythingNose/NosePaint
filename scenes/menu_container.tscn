@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://bd7y4phsil1xx"]
+[gd_scene load_steps=10 format=3 uid="uid://bd7y4phsil1xx"]
 
 [ext_resource type="Script" path="res://scripts/menu.gd" id="1_ysje5"]
 [ext_resource type="Material" uid="uid://0asm43bpndbi" path="res://shaders/invert.tres" id="2_t4nrw"]
 [ext_resource type="FontFile" uid="uid://csla7xq7lsckw" path="res://fonts/SourceCodePro/SourceCodePro-Bold.otf" id="3_2jc6e"]
 [ext_resource type="FontFile" uid="uid://x8kxss0dmyu8" path="res://fonts/SourceCodePro/SourceCodePro-Regular.otf" id="4_p2725"]
+[ext_resource type="PackedScene" uid="uid://br8lxxfohgk1v" path="res://scenes/palette_button.tscn" id="8_2owe8"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_i6e8s"]
 font = ExtResource("3_2jc6e")
@@ -85,8 +86,6 @@ theme_override_constants/separation = 6
 
 [node name="FileExport" type="VBoxContainer" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.42
 
 [node name="Title" type="Label" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport"]
 layout_mode = 2
@@ -94,13 +93,12 @@ text = "File / Export"
 label_settings = SubResource("LabelSettings_i6e8s")
 horizontal_alignment = 1
 
-[node name="Spacer" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport"]
-custom_minimum_size = Vector2(0, 8)
+[node name="----------------------------------------------------------------------------" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport"]
 layout_mode = 2
 
 [node name="NewImageHBox" type="HBoxContainer" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport"]
+custom_minimum_size = Vector2(0, 28)
 layout_mode = 2
-size_flags_vertical = 3
 
 [node name="NewImage" type="Button" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/NewImageHBox"]
 layout_mode = 2
@@ -149,9 +147,12 @@ rounded = true
 update_on_text_changed = true
 suffix = "px"
 
-[node name="FileButtons" type="HBoxContainer" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport"]
+[node name="----------------------------------------------------------------------------2" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport"]
 layout_mode = 2
-size_flags_vertical = 3
+
+[node name="FileButtons" type="HBoxContainer" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport"]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
 alignment = 1
 
 [node name="OpenImage" type="Button" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/FileButtons"]
@@ -175,7 +176,7 @@ focus_mode = 0
 theme_override_fonts/font = ExtResource("3_2jc6e")
 text = "Save As"
 
-[node name="Spacer2" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport"]
+[node name="----------------------------------------------------------------------------3" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport"]
 layout_mode = 2
 
 [node name="Divider Line" type="Panel" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer"]
@@ -185,7 +186,7 @@ theme_override_styles/panel = SubResource("StyleBoxLine_hnck6")
 
 [node name="Palettes" type="VBoxContainer" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 3
+alignment = 1
 
 [node name="Label" type="Label" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes"]
 layout_mode = 2
@@ -193,28 +194,63 @@ text = "Palettes"
 label_settings = SubResource("LabelSettings_i6e8s")
 horizontal_alignment = 1
 
-[node name="Spacer" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes"]
-custom_minimum_size = Vector2(0, 8)
+[node name="----------------------------------------------------------------------------4" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes"]
 layout_mode = 2
 
-[node name="PaletteList" type="ItemList" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes"]
+[node name="PaletteButtons" type="HBoxContainer" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes"]
+custom_minimum_size = Vector2(0, 28)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_stretch_ratio = 0.2
+alignment = 1
+
+[node name="OpenPalettesFolder" type="Button" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes/PaletteButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
 focus_mode = 0
-auto_height = true
-item_count = 4
-max_columns = 0
-same_column_width = true
-icon_mode = 0
-fixed_icon_size = Vector2i(256, 10)
-item_0/text = "TEST"
-item_1/text = "2223"
-item_2/text = "41"
+theme_override_fonts/font = ExtResource("3_2jc6e")
+text = "Open Palettes Folder"
 
-[node name="CenterContainer" type="CenterContainer" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes"]
+[node name="RefreshPalettes" type="Button" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes/PaletteButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_fonts/font = ExtResource("3_2jc6e")
+text = "Refresh Palette List"
+
+[node name="SaveImageAs" type="Button" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes/PaletteButtons"]
 visible = false
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_fonts/font = ExtResource("3_2jc6e")
+text = "Save As"
+
+[node name="----------------------------------------------------------------------------5" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes"]
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes"]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+theme_type_variation = &"DarkPanel"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PaletteGrid" type="GridContainer" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes/Panel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 3
+
+[node name="PaletteButton" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes/Panel/ScrollContainer/PaletteGrid" instance=ExtResource("8_2owe8")]
+layout_mode = 2
+
+[node name="----------------------------------------------------------------------------6" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes"]
+layout_mode = 2
 
 [node name="Divider Line2" type="Panel" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 3)
@@ -232,8 +268,7 @@ text = "Settings"
 label_settings = SubResource("LabelSettings_i6e8s")
 horizontal_alignment = 1
 
-[node name="Spacer" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox"]
-custom_minimum_size = Vector2(0, 8)
+[node name="----------------------------------------------------------------------------4" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox"]
 layout_mode = 2
 
 [node name="# Window" type="Label" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox"]
@@ -251,16 +286,14 @@ layout_mode = 2
 focus_mode = 0
 toggle_mode = true
 
-[node name="Spacer" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox/Fullscreen"]
-custom_minimum_size = Vector2(0, 8)
+[node name="----------------------------------------------------------------------------4" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox/Fullscreen"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox/Fullscreen"]
 layout_mode = 2
 text = "Fullscreen"
 
-[node name="Spacer2" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox"]
-custom_minimum_size = Vector2(0, 8)
+[node name="----------------------------------------------------------------------------5" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox"]
 layout_mode = 2
 
 [node name="# Viewport" type="Label" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox"]
@@ -278,8 +311,7 @@ layout_mode = 2
 focus_mode = 0
 toggle_mode = true
 
-[node name="Spacer" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox/HideMenuLabel"]
-custom_minimum_size = Vector2(0, 8)
+[node name="----------------------------------------------------------------------------4" type="Control" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox/HideMenuLabel"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox/HideMenuLabel"]
@@ -352,6 +384,7 @@ size_flags_stretch_ratio = 0.03
 [connection signal="pressed" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/FileButtons/OpenImage" to="." method="_on_open_image_pressed"]
 [connection signal="pressed" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/FileButtons/SaveImage" to="." method="_on_save_image_pressed"]
 [connection signal="pressed" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/FileButtons/SaveImageAs" to="." method="_on_save_image_as_pressed"]
-[connection signal="item_selected" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes/PaletteList" to="." method="_on_palette_list_item_selected"]
+[connection signal="pressed" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes/PaletteButtons/OpenPalettesFolder" to="." method="_on_open_palettes_folder_pressed"]
+[connection signal="pressed" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes/PaletteButtons/RefreshPalettes" to="." method="_on_refresh_palettes_pressed"]
 [connection signal="toggled" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox/Fullscreen/Fullscreen" to="." method="_on_fullscreen_toggled"]
 [connection signal="toggled" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox/HideMenuLabel/HideMenuLabel" to="." method="_on_hide_menu_label_toggled"]

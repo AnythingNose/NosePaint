@@ -50,6 +50,7 @@ var prev_drawing : bool = false
 var main : Main
 
 
+# Lifecycle Methods
 func _ready() -> void:
 	main = get_tree().current_scene
 	
@@ -161,26 +162,17 @@ func _process(delta: float) -> void:
 
 
 func _clamp_to_edge(pos: Vector2i) -> Vector2i:
-	# Clamp a position to the nearest edge of the canvas
-	var clamped_pos : Vector2i = pos.clamp(Vector2i.ZERO, rect_size)
-	if pos.x < 0:
-		clamped_pos.x = 0
-	elif pos.x >= rect_size.x:
-		clamped_pos.x = rect_size.x
-	
-	if pos.y < 0:
-		clamped_pos.y = 0
-	elif pos.y >= rect_size.y:
-		clamped_pos.y = rect_size.y
-	return clamped_pos
+	return pos.clamp(Vector2i.ZERO, rect_size)
 
 
 ## Image / Viewport functions
 func _update_image_size() -> void:
 	image_size = image.get_size()
 
+
 func _update_rect_size() -> void:
 	rect_size = (get_rect().size) / Vector2(zoom_factor, zoom_factor)
+
 
 func _center_canvas() -> void:
 	# Reset zoom to fit the image within the viewport
@@ -195,6 +187,7 @@ func _center_canvas() -> void:
 		# Image is taller than or matches viewport ratio
 		zoom_factor = viewport_size.y / float(image_size.y)
 	
+	clamp_zoom_factor()
 	# Apply the zoom
 	scale = Vector2(zoom_factor, zoom_factor)
 	# Center position
@@ -202,7 +195,8 @@ func _center_canvas() -> void:
 
 
 func zoom_increment(amount : float) -> void:
-	zoom_factor = clamp(zoom_factor + zoom_factor * amount, min_zoom, max_zoom)
+	zoom_factor = zoom_factor + zoom_factor * amount
+	clamp_zoom_factor()
 	
 	# Save mouse info before applying scale
 	var prescale_mpos : Vector2 = get_viewport().get_mouse_position()
@@ -220,6 +214,10 @@ func zoom_increment(amount : float) -> void:
 	
 	_update_rect_size()
 	%Crosshair.queue_redraw()
+
+
+func clamp_zoom_factor() -> void:
+	zoom_factor = clamp(zoom_factor, min_zoom, max_zoom)
 
 
 func brush_size_increment(amount : int) -> void:

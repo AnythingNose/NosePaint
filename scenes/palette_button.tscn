@@ -1,0 +1,45 @@
+[gd_scene load_steps=4 format=3 uid="uid://br8lxxfohgk1v"]
+
+[ext_resource type="Script" path="res://scripts/palette_button.gd" id="1_tvc87"]
+[ext_resource type="Texture2D" uid="uid://bk3aawjl1ubo3" path="res://palettes/eulbink-1x.png" id="1_ypdas"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_fp2cb"]
+font_size = 15
+
+[node name="PaletteButton" type="Button"]
+custom_minimum_size = Vector2(0, 50)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_type_variation = &"PaletteButton"
+toggle_mode = true
+script = ExtResource("1_tvc87")
+
+[node name="Control" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 19.0
+offset_top = 5.0
+offset_right = -20.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="Control"]
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("1_ypdas")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="Control"]
+layout_mode = 2
+size_flags_vertical = 6
+text = "minecraft-64 wayotoflasflf"
+label_settings = SubResource("LabelSettings_fp2cb")
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
