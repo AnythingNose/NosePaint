@@ -20,7 +20,7 @@ var block_draw : bool = false:
 # Lifecycle Methods
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
-	
+	DisplayServer.window_set_title("Nose Paint " + ProjectSettings.get_setting("application/config/version"))
 	# Force load the default palette
 	%Palette.regenerate_palette(%Palette.parse_palette(default_palettes[0]))
 	current_palette = get_palette_filename(default_palettes[0].resource_path)
