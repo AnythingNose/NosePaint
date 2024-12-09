@@ -39,6 +39,8 @@ var pan_start: Vector2  # Starting position for panning
 
 # Drawing
 var colour_primary : Color = Color.WHITE
+var eyedrop_colour : Color
+var eyedropping : bool = false
 var radius : int = default_brush_size
 var stroke_start : Vector2i
 var connect_on_release : bool
@@ -115,11 +117,26 @@ func _process(delta: float) -> void:
 			on_draw_end.emit()
 			prev_drawing = false
 	
+	# Drawing input
+	if Input.is_action_just_pressed("eyedrop"):
+		eyedropping = true
+		main.block_draw = true
+		%Info.eyedrop_label.visible = true
+	if eyedropping:
+		var img : Image = get_viewport().get_texture().get_image()
+		var global_mpos : Vector2i = Vector2i(get_global_mouse_position()).clamp(Vector2i.ZERO, get_viewport().size - Vector2i.ONE)
+		eyedrop_colour = img.get_pixel(global_mpos.x, global_mpos.y)
+	if Input.is_action_just_released("eyedrop"):
+		eyedropping = false
+		main.block_draw = false
+		%Info.eyedrop_label.visible = false
+		colour_primary = eyedrop_colour
+	
 	if main.block_draw or %Palette.mouse_inside:
 		prev_mpos = mpos
 		return
 	
-	# Drawing input
+	
 	connect_on_release = Input.is_action_pressed("connect")
 	if Input.is_action_just_pressed("click"):
 		stroke_start = mpos

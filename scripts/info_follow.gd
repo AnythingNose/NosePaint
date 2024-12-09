@@ -2,6 +2,7 @@ class_name InfoFollow extends Control
 
 @onready var radius_label: Label = $VBox/RadiusLabel
 @onready var connect_label: Label = $VBox/ConnectLabel
+@onready var eyedrop_label: Label = $VBox/EyedropLabel
 
 @export var x_offset : float = 10
 @export var radius_update_lifetime : float = 0.5

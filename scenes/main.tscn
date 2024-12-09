@@ -123,6 +123,13 @@ layout_mode = 2
 text = "Connect"
 label_settings = SubResource("LabelSettings_60a27")
 
+[node name="EyedropLabel" type="Label" parent="Info/VBox"]
+visible = false
+use_parent_material = true
+layout_mode = 2
+text = "Eyedropping"
+label_settings = SubResource("LabelSettings_60a27")
+
 [node name="MenuContainer" parent="." instance=ExtResource("10_ee5xk")]
 visible = false
 layout_mode = 1
