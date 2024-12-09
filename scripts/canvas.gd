@@ -7,6 +7,7 @@ class_name Canvas extends TextureRect
 ## Delays the texture updates, maintaining the same smoothness of brush strokes and improving performance,
 ## at the cost of making stroke updates feel laggier..
 @export_range(0, 0.1) var update_interval: float = 0.01
+@export_range(0, 0.1) var eyedrop_average_update_interval: float = 0.05
 @export_range(0, 1) var zoom_sensitivity: float = 0.1
 @export_range(0, 1) var default_brush_size: int = 4
 @export_range(0, 1) var brush_size_change_sensitivity: int = 1
@@ -25,6 +26,7 @@ var image : Image
 var image_size : Vector2i
 var dirty : bool = false
 var update_timer: float = 0.0
+var eyedrop_average_update_timer: float = 0.0
 var rect_size : Vector2i
 
 # Mouse Position
@@ -32,6 +34,7 @@ var mpos : Vector2i
 var prev_mpos : Vector2i
 var m_delta : Vector2i
 var mouse_in_canvas : bool
+var was_in_canvas: bool
 
 # Viewport zooming / panning
 var zoom_factor: float = 1.0  # Default zoom level
@@ -40,7 +43,6 @@ var pan_start: Vector2  # Starting position for panning
 # Drawing
 var colour_primary : Color = Color.WHITE
 var eyedrop_colour : Color
-var eyedropping : bool = false
 var radius : int = default_brush_size
 var stroke_start : Vector2i
 var connect_on_release : bool
@@ -52,31 +54,11 @@ var prev_drawing : bool = false
 var main : Main
 
 
-# Lifecycle Methods
+## Lifecycle Methods
 func _ready() -> void:
 	main = get_tree().current_scene
 	
 	new_blank_image(get_viewport().size)
-
-func new_blank_image(dimensions: Vector2i) -> void:
-	# Create a new image and assign it to the texture
-	image = Image.create_empty(dimensions.x, dimensions.y, false, Image.FORMAT_RGB8)
-	init_canvas()
-
-
-func new_texture_from_path(path : String) -> void:
-	image.load(path)
-	init_canvas()
-
-
-func init_canvas() -> void:
-	_update_image_size()
-	texture = ImageTexture.create_from_image(image)
-	size = Vector2(image_size)
-	_center_canvas()
-	_update_rect_size()
-	%Crosshair.queue_redraw()
-	dirty = true
 
 
 func _input(event: InputEvent) -> void:
@@ -88,6 +70,24 @@ func _input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	_process_input(delta)
+
+	# Get and clamp mouse position
+	mpos = get_local_mouse_position().clamp(Vector2i.ZERO, rect_size)
+	was_in_canvas = mouse_in_canvas
+	mouse_in_canvas = get_local_mouse_position().x > 0 and get_local_mouse_position().x < rect_size.x \
+					and get_local_mouse_position().y > 0 and get_local_mouse_position().y < rect_size.y
+	m_delta = prev_mpos - mpos
+	
+	_process_drawing()
+	_process_texture_updates(delta)
+	
+	# Save the current mouse position for the next frame
+	prev_mpos = mpos
+
+
+## Compartmentalised Process Functions
+func _process_input(delta : float) -> void:
 	# Zoom and brush size input
 	if Input.is_action_pressed("zoom_modifier"):
 		if Input.is_action_just_pressed("increase_size"):
@@ -97,17 +97,47 @@ func _process(delta: float) -> void:
 	else:
 		if Input.is_action_just_pressed("increase_size"):
 			brush_size_increment(-brush_size_change_sensitivity)
-		
 		if Input.is_action_just_pressed("decrease_size"):
 			brush_size_increment(brush_size_change_sensitivity)
 	
-	# Get and clamp mouse position
-	mpos = get_local_mouse_position().clamp(Vector2i.ZERO, rect_size)
-	var was_in_canvas: bool = mouse_in_canvas
-	mouse_in_canvas = get_local_mouse_position().x > 0 and get_local_mouse_position().x < rect_size.x \
-					and get_local_mouse_position().y > 0 and get_local_mouse_position().y < rect_size.y
-	m_delta = prev_mpos - mpos
-	
+	# Eyedropping
+	if not main.menu.open:
+		if Input.is_action_pressed("eyedrop"):
+			%Info.eyedropping = true
+		if Input.is_action_just_released("eyedrop"):
+			if %Info.eyedropping:
+				end_eyedrop()
+		
+		if %Info.eyedropping:
+			if Input.is_action_just_pressed("click"):
+				end_eyedrop()
+				return
+			elif Input.is_action_just_pressed("alt_click"):
+				end_eyedrop(false)
+				return
+			
+			var img : Image = %SubViewport.get_texture().get_image()
+			var global_mpos : Vector2i = Vector2i(get_global_mouse_position()).clamp(Vector2i.ZERO, get_viewport().size - Vector2i.ONE)
+			
+			if Input.is_action_pressed("average_colour"):
+				%Info.average_label.visible = true
+				if eyedrop_average_update_timer < eyedrop_average_update_interval:
+					eyedrop_average_update_timer += delta
+				else:
+					var pixels : Array[Vector2i] = get_pixels_in_radius(mpos,radius)
+					var average_colour : Color = Color.BLACK
+					for pixel : Vector2i in pixels:
+						average_colour += image.get_pixel(pixel.x, pixel.y)
+					if pixels.size() > 0:
+						average_colour /= pixels.size()
+					eyedrop_colour = average_colour
+					
+					eyedrop_average_update_timer = 0
+			else:
+				eyedrop_colour = img.get_pixel(global_mpos.x, global_mpos.y)
+
+
+func _process_drawing() -> void:
 	if drawing:
 		if not prev_drawing:
 			on_draw_start.emit()
@@ -117,26 +147,10 @@ func _process(delta: float) -> void:
 			on_draw_end.emit()
 			prev_drawing = false
 	
-	# Drawing input
-	if Input.is_action_just_pressed("eyedrop"):
-		eyedropping = true
-		main.block_draw = true
-		%Info.eyedrop_label.visible = true
-	if eyedropping:
-		var img : Image = get_viewport().get_texture().get_image()
-		var global_mpos : Vector2i = Vector2i(get_global_mouse_position()).clamp(Vector2i.ZERO, get_viewport().size - Vector2i.ONE)
-		eyedrop_colour = img.get_pixel(global_mpos.x, global_mpos.y)
-	if Input.is_action_just_released("eyedrop"):
-		eyedropping = false
-		main.block_draw = false
-		%Info.eyedrop_label.visible = false
-		colour_primary = eyedrop_colour
-	
 	if main.block_draw or %Palette.mouse_inside:
-		prev_mpos = mpos
 		return
 	
-	
+	# Drawing input
 	connect_on_release = Input.is_action_pressed("connect")
 	if Input.is_action_just_pressed("click"):
 		stroke_start = mpos
@@ -166,23 +180,49 @@ func _process(delta: float) -> void:
 		drawing = false
 		if connect_on_release:
 			_draw_line(_plot_line(mpos, stroke_start))
-	
+
+
+func _process_texture_updates(delta : float) -> void:
 	# Update texture periodically if dirty
 	update_timer += delta
 	if dirty and update_timer >= update_interval:
 		texture.update(image)
 		dirty = false
 		update_timer = 0.0
-	
-	# Save the current mouse position for the next frame
-	prev_mpos = mpos
 
 
+## Utility / Functions
 func _clamp_to_edge(pos: Vector2i) -> Vector2i:
 	return pos.clamp(Vector2i.ZERO, rect_size)
 
+func end_eyedrop(keep_colour : bool = true) -> void:
+	%Info.eyedropping = false
+	if keep_colour:
+		colour_primary = eyedrop_colour
 
-## Image / Viewport functions
+
+## Image / Canvas Intialisation and Loading
+func new_blank_image(dimensions: Vector2i) -> void:
+	# Create a new image and assign it to the texture
+	image = Image.create_empty(dimensions.x, dimensions.y, false, Image.FORMAT_RGB8)
+	init_canvas()
+
+
+func new_texture_from_path(path : String) -> void:
+	image.load(path)
+	init_canvas()
+
+
+func init_canvas() -> void:
+	_update_image_size()
+	texture = ImageTexture.create_from_image(image)
+	size = Vector2(image_size)
+	_center_canvas()
+	_update_rect_size()
+	%Crosshair.queue_redraw()
+	dirty = true
+
+
 func _update_image_size() -> void:
 	image_size = image.get_size()
 
@@ -191,6 +231,7 @@ func _update_rect_size() -> void:
 	rect_size = (get_rect().size) / Vector2(zoom_factor, zoom_factor)
 
 
+## Zoom / Brush Size Functions
 func _center_canvas() -> void:
 	# Reset zoom to fit the image within the viewport
 	var viewport_size: Vector2 = get_viewport().size
@@ -239,6 +280,7 @@ func clamp_zoom_factor() -> void:
 
 func brush_size_increment(amount : int) -> void:
 	radius = clamp(radius + amount, min_brush_radius, max_brush_radius)
+	
 	%Crosshair.queue_redraw()
 	%Info.push_radius_update(radius)
 	if not main.block_draw:
@@ -317,3 +359,49 @@ func _plot_line(p0: Vector2i, p1: Vector2i) -> Array[Vector2i]:
 		if current.distance_to(points[-1]) > step_distance:
 			points.append(current)
 	return points
+
+# Pixel reading functions (Same as drawing functions but reads pixels rather than drawing them.
+# I tried incorporating this functionality into the normal drawing functions but it impacted
+# performance too much.
+func get_pixels_in_radius(center: Vector2i, _radius: int) -> Array[Vector2i]:
+	var pixels: Array[Vector2i] = []
+
+	if _radius == 0:
+		if center.x < image_size.x and center.y < image_size.y:
+			pixels.append(center)
+	else:
+		var x: int = 0
+		var y: int = _radius
+		var p: int = 1 - _radius
+
+		while x <= y:
+			_add_circle_points(pixels, center, x, y)
+			x += 1
+			if p < 0:
+				p += 2 * x + 1
+			else:
+				y -= 1
+				p += 2 * (x - y) + 1
+
+	return pixels
+
+
+func _add_circle_points(pixels: Array[Vector2i], center: Vector2i, x: int, y: int) -> void:
+	_add_horizontal_line(pixels, center, -x, x, center.y + y)
+	_add_horizontal_line(pixels, center, -x, x, center.y - y)
+	_add_horizontal_line(pixels, center, -y, y, center.y + x)
+	_add_horizontal_line(pixels, center, -y, y, center.y - x)
+
+
+func _add_horizontal_line(pixels: Array[Vector2i], center: Vector2i, start_x: int, end_x: int, y: int) -> void:
+	# Skip if the row is out of bounds
+	if y < 0 or y >= image_size.y:
+		return
+		
+	# Clamp the horizontal range
+	start_x = max(center.x + start_x, 0) - center.x
+	end_x = min(center.x + end_x, image_size.x - 1) - center.x
+	
+	# Add the horizontal line
+	for dx: int in range(start_x, end_x + 1):
+		pixels.append(Vector2i(center.x + dx, y))

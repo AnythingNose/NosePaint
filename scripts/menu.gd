@@ -2,6 +2,7 @@ class_name Menu extends Control
 
 @onready var menu: Panel = $Menu
 @onready var menu_label: Label = $MenuLabel
+@onready var help_label: RichTextLabel = $Menu/MenuHBox/HelpLabel
 @onready var palette_grid: GridContainer = $Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes/Panel/ScrollContainer/PaletteGrid
 # Setting buttons 
 @onready var fullscreen_button: Button = $Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox/Fullscreen/Fullscreen
@@ -20,6 +21,7 @@ var hide_menu_label : bool:
 
 func _ready() -> void:
 	main = get_tree().current_scene
+	help_label.scroll_to_line(0)
 	show_menu(open)
 	self.visible = true
 
@@ -37,6 +39,8 @@ func show_menu(should_show : bool) -> void:
 	main.block_draw = should_show
 	show_menu_label(!should_show)
 	%Palette.visible = !should_show
+	if should_show:
+		%Canvas.end_eyedrop(false)
 
 func show_menu_label(should_show : bool) -> void:
 	menu_label.visible = false if hide_menu_label else should_show
@@ -98,3 +102,7 @@ func _on_open_palettes_folder_pressed() -> void:
 
 func _on_refresh_palettes_pressed() -> void:
 	main.read_palette_folder()
+
+
+func _on_help_label_meta_clicked(meta: Variant) -> void:
+	OS.shell_open(str(meta))

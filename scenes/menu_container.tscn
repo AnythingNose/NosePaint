@@ -1,9 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://bd7y4phsil1xx"]
+[gd_scene load_steps=11 format=3 uid="uid://bd7y4phsil1xx"]
 
 [ext_resource type="Script" path="res://scripts/menu.gd" id="1_ysje5"]
 [ext_resource type="Material" uid="uid://0asm43bpndbi" path="res://shaders/invert.tres" id="2_t4nrw"]
 [ext_resource type="FontFile" uid="uid://csla7xq7lsckw" path="res://fonts/SourceCodePro/SourceCodePro-Bold.otf" id="3_2jc6e"]
 [ext_resource type="FontFile" uid="uid://x8kxss0dmyu8" path="res://fonts/SourceCodePro/SourceCodePro-Regular.otf" id="4_p2725"]
+[ext_resource type="FontFile" uid="uid://chsqjvclju48q" path="res://fonts/SourceCodePro/SourceCodePro-It.otf" id="6_52456"]
+[ext_resource type="FontFile" uid="uid://0eom08qbq70p" path="res://fonts/SourceCodePro/SourceCodePro-BoldIt.otf" id="7_3jmoc"]
 [ext_resource type="PackedScene" uid="uid://br8lxxfohgk1v" path="res://scenes/palette_button.tscn" id="8_2owe8"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_i6e8s"]
@@ -17,13 +19,6 @@ thickness = 3
 
 [sub_resource type="LabelSettings" id="LabelSettings_1du00"]
 font = ExtResource("3_2jc6e")
-
-[sub_resource type="StyleBoxLine" id="StyleBoxLine_wbg6l"]
-color = Color(0, 0, 0, 0.2)
-grow_begin = 0.0
-grow_end = 0.0
-thickness = 3
-vertical = true
 
 [node name="MenuContainer" type="Control"]
 layout_mode = 3
@@ -57,21 +52,18 @@ offset_bottom = -18.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MenuHBox" type="HBoxContainer" parent="Menu"]
+[node name="MenuHBox" type="HSplitContainer" parent="Menu"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 9.0
 offset_top = 7.0
+offset_right = -9.0
 offset_bottom = -7.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 0
-
-[node name="Spacer" type="Control" parent="Menu/MenuHBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.03
+theme_override_constants/separation = 22
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Menu/MenuHBox"]
 layout_mode = 2
@@ -318,67 +310,51 @@ layout_mode = 2
 layout_mode = 2
 text = "Hide top-left menu label"
 
-[node name="SpacerLine" type="Control" parent="Menu/MenuHBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.1
-
-[node name="Divider Line" type="Panel" parent="Menu/MenuHBox/SpacerLine"]
-custom_minimum_size = Vector2(3, 0)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -1.5
-offset_top = -342.0
-offset_right = 1.5
-offset_bottom = 342.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxLine_wbg6l")
-
-[node name="RichTextLabel" type="RichTextLabel" parent="Menu/MenuHBox"]
+[node name="HelpLabel" type="RichTextLabel" parent="Menu/MenuHBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 2
+theme_override_constants/line_separation = 6
 theme_override_fonts/normal_font = ExtResource("4_p2725")
+theme_override_fonts/italics_font = ExtResource("6_52456")
+theme_override_fonts/bold_italics_font = ExtResource("7_3jmoc")
 theme_override_fonts/bold_font = ExtResource("3_2jc6e")
 bbcode_enabled = true
 text = "[p align=center][b]Info[/b]
 [p align=left]
-[b]# Drawing [/b]
+[center][b]⸻ Drawing ⸻[/b][/center]
 Left click to paint.
 Use scroll wheel to change brush size.
 
-[b]# Viewport[/b]
+[center][b]⸻ Viewport ⸻[/b][/center]
 Right click & drag to pan view.
 Double right click to center viewport.
 Hold shift or ctrl then scroll to zoom.
 
-[b]# Shortcuts[/b]
+[center][b]⸻ Shortcuts ⸻[/b][/center]
 Ctrl+N to create a new image.
 Ctrl+S to quicksave current image.
 Ctrl+Shift+S to save current image.
 Ctrl+O to open an image.
 F11 to toggle fullscreen.
 
-[b]# Functions[/b]
+[center][b]⸻ Functions ⸻[/b][/center]
+Stroke Connect:
 Hold C before you stop drawing to connect your stroke's end point to its start point.
 
-[b]# Credits[/b]
+Eyedropper:
+Hold E to enter eyedropper mode.
+Hold A to average pixels within the brush radius.
+Release E (or press left click) to confirm eyedropper.
+Right click to cancel eyedropper.
+
+[center][b]⸻ Credits ⸻[/b][/center]
 Made by Jo Haynes & Anything Nose Productions
 Font: SourceCodePro by Adobe
-Default colour palette: UFO 50 by UFO 50"
-scroll_following = true
+Default colour palette: UFO 50 by UFO 50
+All palettes included in this applications files are sourced from [url=https://lospec.com/palette-list]LOSPEC's palette list[/url] using their original file names."
 selection_enabled = true
-
-[node name="Spacer2" type="Control" parent="Menu/MenuHBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.03
 
 [connection signal="pressed" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/NewImageHBox/NewImage" to="." method="_on_new_image_pressed"]
 [connection signal="pressed" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/FileExport/FileButtons/OpenImage" to="." method="_on_open_image_pressed"]
@@ -388,3 +364,4 @@ size_flags_stretch_ratio = 0.03
 [connection signal="pressed" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/Palettes/PaletteButtons/RefreshPalettes" to="." method="_on_refresh_palettes_pressed"]
 [connection signal="toggled" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox/Fullscreen/Fullscreen" to="." method="_on_fullscreen_toggled"]
 [connection signal="toggled" from="Menu/MenuHBox/ScrollContainer/VBoxContainer/SettingsVBox/HideMenuLabel/HideMenuLabel" to="." method="_on_hide_menu_label_toggled"]
+[connection signal="meta_clicked" from="Menu/MenuHBox/HelpLabel" to="." method="_on_help_label_meta_clicked"]
