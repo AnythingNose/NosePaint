@@ -2,6 +2,8 @@ class_name ColourPalette extends VSplitContainer
 
 @onready var container: HBoxContainer = $PaletteContainer
 @onready var archetype: Colour = $PaletteContainer/Colour
+@onready var selected_colour: ColorRect = $PaletteContainer/SelectedColour
+@onready var selected_outline: Panel = $PaletteContainer/SelectedColour/SelectedOutline
 
 const FADE_IN_DELAY : float = 0.33
 const FADE_IN_DURATION : float = 0.5
@@ -22,10 +24,11 @@ var drag_rect : Rect2
 
 func _ready() -> void:
 	main = get_tree().current_scene
-	
 	get_tree().get_root().size_changed.connect(update_split_offset) 
 	%Canvas.on_draw_start.connect(draw_start)
 	%Canvas.on_draw_end.connect(draw_end)
+	archetype.hide()
+	selected_colour.color = %Canvas.colour_primary
 
 
 func _process(delta: float) -> void:
@@ -87,7 +90,7 @@ func parse_palette(tex : Texture2D) -> Array[Color]:
 
 func regenerate_palette(colours : Array[Color]) -> void:
 	for child : Node in container.get_children():
-		if child != archetype:
+		if child != archetype and child is Colour:
 			child.queue_free()
 	
 	for colour : Color in colours:
@@ -96,7 +99,6 @@ func regenerate_palette(colours : Array[Color]) -> void:
 		s.palette = self
 		s.self_modulate = colour
 		s.show()
-	archetype.hide()
 
 
 # Fade in / out functions

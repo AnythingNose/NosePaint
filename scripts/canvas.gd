@@ -41,11 +41,14 @@ var zoom_factor: float = 1.0  # Default zoom level
 var pan_start: Vector2  # Starting position for panning
 
 # Drawing
-var colour_primary : Color = Color.WHITE
 var eyedrop_colour : Color
 var radius : int = default_brush_size
 var stroke_start : Vector2i
 var connect_on_release : bool
+var colour_primary : Color = Color.WHITE:
+	set(value):
+		colour_primary = value
+		brush_colour_changed()
 
 var drawing : bool = false
 var prev_drawing : bool = false
@@ -57,7 +60,6 @@ var main : Main
 ## Lifecycle Methods
 func _ready() -> void:
 	main = get_tree().current_scene
-	
 	new_blank_image(get_viewport().size)
 
 
@@ -192,6 +194,9 @@ func _process_texture_updates(delta : float) -> void:
 
 
 ## Utility / Functions
+func brush_colour_changed() -> void:
+	%Palette.selected_colour.color = colour_primary
+
 func _clamp_to_edge(pos: Vector2i) -> Vector2i:
 	return pos.clamp(Vector2i.ZERO, rect_size)
 

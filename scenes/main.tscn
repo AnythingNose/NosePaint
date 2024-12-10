@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://c4phxvqjk60vj"]
+[gd_scene load_steps=28 format=3 uid="uid://c4phxvqjk60vj"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_rj4t4"]
 [ext_resource type="Script" path="res://scripts/canvas.gd" id="2_y2bwc"]
@@ -23,6 +23,13 @@
 [ext_resource type="Texture2D" uid="uid://bfn1wg2ubuh21" path="res://palettes/windows-95-256-colours-1x.png" id="13_8732v"]
 
 [sub_resource type="ImageTexture" id="ImageTexture_h058i"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_81yn8"]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_xftai"]
 
@@ -110,7 +117,28 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 
+[node name="SelectedColour" type="ColorRect" parent="SubViewportContainer/SubViewport/Palette/PaletteContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SelectedOutline" type="Panel" parent="SubViewportContainer/SubViewport/Palette/PaletteContainer/SelectedColour"]
+material = ExtResource("3_vumrx")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_81yn8")
+
+[node name="SelectedSpacer" type="Control" parent="SubViewportContainer/SubViewport/Palette/PaletteContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.05
+
 [node name="Colour" parent="SubViewportContainer/SubViewport/Palette/PaletteContainer" instance=ExtResource("6_cq0ec")]
+visible = false
 layout_mode = 2
 
 [node name="Crosshair" type="Control" parent="."]
