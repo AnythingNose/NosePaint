@@ -45,7 +45,7 @@ var eyedrop_colour : Color
 var radius : int = default_brush_size
 var stroke_start : Vector2i
 var connect_on_release : bool
-var colour_primary : Color = Color.WHITE:
+var colour_primary : Color = Color(1,1,1,1):
 	set(value):
 		colour_primary = value
 		brush_colour_changed()
@@ -209,7 +209,8 @@ func end_eyedrop(keep_colour : bool = true) -> void:
 ## Image / Canvas Intialisation and Loading
 func new_blank_image(dimensions: Vector2i) -> void:
 	# Create a new image and assign it to the texture
-	image = Image.create_empty(dimensions.x, dimensions.y, false, Image.FORMAT_RGB8)
+	image = Image.create_empty(dimensions.x, dimensions.y, false, Image.FORMAT_RGBA8)
+	image.fill(Color.BLACK)
 	init_canvas()
 
 
@@ -339,7 +340,6 @@ func _draw_horizontal_line(center: Vector2i, start_x: int, end_x: int, y: int) -
 	# Draw the horizontal line
 	for dx : int in range(start_x, end_x + 1):
 		image.set_pixel(center.x + dx, y, colour_primary)
-
 
 # Use Bresenham's line algorithm
 func _plot_line(p0: Vector2i, p1: Vector2i) -> Array[Vector2i]:

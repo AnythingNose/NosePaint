@@ -26,6 +26,7 @@ func _ready() -> void:
 	current_palette = get_palette_filename(default_palettes[0].resource_path)
 	read_palette_folder()
 
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("new_image"):
 		new_file()
